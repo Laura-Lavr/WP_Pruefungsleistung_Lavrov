@@ -1,35 +1,63 @@
-from flask import Flask, render_template, request
+from flask import Flask, request, jsonify, make_response, abort, render_template
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-
+import jwt
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.db'  # Drei Schrägstriche für relativen Pfad
+app.config['SECRET_KEY'] = 's9d78f6s9d8fhksahdfkj'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-class Login(db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.String(200), nullable=True)
-    content = db.Column(db.String(500), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    username = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    passwordHash = db.Column(db.String(128), nullable=False)
+    isAdmin = db.Column(db.Boolean, default=False)
 
 
-@app.route("/", methods=['GET', 'POST'])
-def start_page_user(name):
-    if request.method == 'POST':
-        new_message = Message(
-            user=name,
-            content=request.form['content']
-        )
-        db.session.add(new_message)
-        db.session.commit()
-    messages = Message.query.order_by(Message.created_at).all()
-    return render_template('index.html', messages=messages)
+def pos_by_email(email):
+    return User.query.filter_by(email=email).first()
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+ 
+
+@app.route('/users/login', methods=["POST"])
+def login():
+    data = request.json
+    if "email" not in data.keys() or "passwordHash" not in data.keys():
+        abort(400, "Required data missing!")
+    user = pos_by_email(data['email'])
+    if not user:
+        abort(400, "User not found!")
+    if user.passwordHash != data['passwordHash']:
+        abort(401, "Password incorrect!")
+    token = jwt.encode({"user_id": user.id}, app.config["SECRET_KEY"], algorithm="HS256")
+    return make_response(jsonify({"token": token}), 200)
+
+
+@app.route('/users/signup', methods=["POST"])
+def signup():
+    data = request.json
+    if "username" not in data.keys() or "email" not in data.keys() or "password" not in data.keys():
+        abort(400, "Required data missing!")
+    if pos_by_email(data['email']):
+        abort(400, "Email already exists!")
+    new_user = User(
+        username=data["username"],
+        email=data["email"],
+        passwordHash=data["password"]
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return make_response(jsonify({"message": "User created!"}), 201)
 
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(port=5000, debug=True)
