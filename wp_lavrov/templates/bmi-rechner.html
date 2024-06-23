@@ -21,7 +21,7 @@
                         <a class="nav-link active" href="{{ url_for('bmi_calculator') }}">BMI-Rechner</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Kalorienbedarf-Rechner</a>
+                        <a class="nav-link" href="{{ url_for('calories_calculator')}}">Kalorienbedarf-Rechner</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -29,8 +29,6 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url_for('ffmi_calculator') }}">FFMI-Rechner</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Impressum</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -68,7 +66,8 @@
     </div>
     <div class="container mt-5">
         <div class="text-center">
-            <h3>Du kennst deinen Körperfettanteil und möchtest ein aussagekräftigeres Ergebnis?</h3>
+            <h3>Du kennst deinen Körperfettanteil und möchtest</h3>
+            <h3>ein aussagekräftigeres Ergebnis?</h3>
             <p class="lead">Dann berechne zusätzlich deinen FFMI!</p>
         </div>
 
