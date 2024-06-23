@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, make_response, abort, render_template
 from flask_sqlalchemy import SQLAlchemy
 import jwt
-
+from bmi_calories import calculate_bmi, calculate_ffmi
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 's9d78f6s9d8fhksahdfkj'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.db'
@@ -24,7 +24,7 @@ def pos_by_email(email):
 @app.route('/')
 def index():
     return render_template('index.html')
- 
+
 
 @app.route('/users/login', methods=["POST"])
 def login():
@@ -57,7 +57,41 @@ def signup():
     return make_response(jsonify({"message": "User created!"}), 201)
 
 
+@app.route('/bmi')
+def bmi_calculator():
+    return render_template('bmi-rechner.html')
+
+
+@app.route('/calculate_bmi', methods=['POST'])
+def calculate_bmi_flask():
+    data = request.json
+    weight = data['weight']
+    height = data['height']
+    bmi, category = calculate_bmi(weight, height)
+    return jsonify({'bmi': bmi, 'category': category})
+
+@app.route('/ffmi')
+def ffmi_calculator():
+    return render_template('ffmi-rechner.html')
+
+
+@app.route('/calculate_ffmi', methods=['POST'])
+def calculate_ffmi_flask():
+    data = request.json
+    sex = data['sex']
+    weight = data['weight']
+    height = data['height']
+    bodyfat = data['bodyfat']
+    ffmi, category = calculate_ffmi(sex, weight, height, bodyfat)
+    return jsonify({'ffmi': ffmi, 'category': category})
+
+@app.route('/calories')
+def calories_calculator():
+    return render_template('calories-rechner.html')
+
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(port=5000, debug=True)
+    app.run(port=5001, debug=True)
+

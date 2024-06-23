@@ -23,14 +23,14 @@
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: #e6e6e6;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">HealthHub</a>
+            <a class="navbar-brand" href="/">HealthHub</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">BMI-Rechner</a>
+                        <a class="nav-link active" href="{{ url_for('bmi_calculator') }}">BMI-Rechner</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Kalorienbedarf-Rechner</a>
@@ -40,7 +40,7 @@
                             Mehr
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Fitness Tagebuch</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('ffmi_calculator') }}">FFMI-Rechner</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Impressum</a></li>
                         </ul>
@@ -89,6 +89,31 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
+    </div>
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1>Willkommen bei HealthHub</h1>
+            <p class="lead">Dein persönlicher Begleiter für ein gesünderes Leben</p>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-6 offset-lg-3">
+                <p><strong>HealthHub</strong> bietet dir alles, was du brauchst, um fit und gesund zu bleiben:</p>
+                <ul>
+                    <li><strong>BMI-Rechner</strong>: Überwache dein Körpergewicht und stelle sicher, dass du im gesunden Bereich bleibst.</li>
+                    <li><strong>Kalorienbedarf-Rechner</strong>: Errechne deinen täglichen Kalorienbedarf und optimiere deine Ernährung.</li>
+                    <li><strong>Fitness Tagebuch</strong>: Verfolge deine Fortschritte und bleibe motiviert.</li>
+                    <li><strong>Gesunde Rezepte</strong>: Hol dir Tipps für eine ausgewogene und nährstoffreiche Ernährung.</li>
+                </ul>
+
+                <h3 class="mt-4">Werde Mitglied bei HealthHub</h3>
+                <p>Melde dich an und nutze alle Funktionen unserer Plattform. Unser Ziel ist es, dich auf deinem Weg zu einem gesünderen Leben zu unterstützen.</p>
+
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Jetzt anmelden und loslegen!</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -189,5 +214,3 @@
     </script>
 </body>
 </html>
-
-
