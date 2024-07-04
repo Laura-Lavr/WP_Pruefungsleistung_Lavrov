@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, make_response, abort, render_template
 from flask_sqlalchemy import SQLAlchemy
 import jwt
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from bmi_calories import calculate_bmi, calculate_ffmi, calculate_calories
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 's9d78f6s9d8fhksahdfkj'
@@ -29,15 +31,18 @@ def index():
 @app.route('/users/login', methods=["POST"])
 def login():
     data = request.json
-    if "email" not in data.keys() or "passwordHash" not in data.keys():
-        abort(400, "Required data missing!")
+    if "email" not in data.keys() or "password" not in data.keys():
+        return jsonify({"error": "Required data missing!"}), 400
+
     user = pos_by_email(data['email'])
     if not user:
-        abort(400, "User not found!")
-    if user.passwordHash != data['passwordHash']:
-        abort(401, "Password incorrect!")
+        return jsonify({"error": "User not found!"}), 400
+
+    if not check_password_hash(user.passwordHash, data['password']):
+        return jsonify({"error": "Incorrect password!"}), 401
+
     token = jwt.encode({"user_id": user.id}, app.config["SECRET_KEY"], algorithm="HS256")
-    return make_response(jsonify({"token": token}), 200)
+    return jsonify({"token": token}), 200
 
 
 @app.route('/users/signup', methods=["POST"])
@@ -50,7 +55,7 @@ def signup():
     new_user = User(
         username=data["username"],
         email=data["email"],
-        passwordHash=data["password"]
+        passwordHash=generate_password_hash(data['password'], 'pbkdf2:sha256')
     )
     db.session.add(new_user)
     db.session.commit()
@@ -107,5 +112,5 @@ def calculate_calories_flask():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(port=5001, debug=True)
+    app.run(port=5000, debug=True)
 

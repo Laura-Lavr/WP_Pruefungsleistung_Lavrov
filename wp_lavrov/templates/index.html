@@ -75,7 +75,7 @@
                 <img src="{{ url_for('static', filename='images/health/strawberries-1309322_1920.jpg') }}" class="d-block w-100" alt="...">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Eat healthy</h5>
-                    <p>Fit bleiben mit einer nährstoffhaltigen Ernährung!</p>
+                    <p>Fit bleiben mit einer gesunden Ernährung!</p>
                 </div>
             </div>
         </div>
@@ -100,15 +100,14 @@
                 <ul>
                     <li><strong>BMI-Rechner</strong>: Überwache dein Körpergewicht und stelle sicher, dass du im gesunden Bereich bleibst.</li>
                     <li><strong>Kalorienbedarf-Rechner</strong>: Errechne deinen täglichen Kalorienbedarf und optimiere deine Ernährung.</li>
-                    <li><strong>Fitness Tagebuch</strong>: Verfolge deine Fortschritte und bleibe motiviert.</li>
-                    <li><strong>Gesunde Rezepte</strong>: Hol dir Tipps für eine ausgewogene und nährstoffreiche Ernährung.</li>
+                    <li><strong>FFMI-Rechner</strong>: Wie gut in Form bist du wirklich?</li>
                 </ul>
 
                 <h3 class="mt-4">Werde Mitglied bei HealthHub</h3>
-                <p>Melde dich an und nutze alle Funktionen unserer Plattform. Unser Ziel ist es, dich auf deinem Weg zu einem gesünderen Leben zu unterstützen.</p>
+                <p>Melde dich an und nutze alle Funktionen von HealthHub. Wir unterstützen dich auf deinem Weg zu einem gesünderen Leben.</p>
 
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Jetzt anmelden und loslegen!</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Jetzt anmelden und starten!</button>
                 </div>
             </div>
         </div>
@@ -167,26 +166,28 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const response = await fetch('/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, passwordHash: password })
-            });
-            if (response.ok) {
-                const token = await response.text();
-                localStorage.setItem('token', token);
-                alert('Login successful!');
-                window.location.reload();
-            } else {
-                alert('Login failed!');
-            }
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const response = await fetch('/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            alert('Login successful!');
+            window.location.reload();
+        } else {
+            const errorData = await response.json();
+            alert(`Login failed: ${errorData.error}`);
+        }
+});
 
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();

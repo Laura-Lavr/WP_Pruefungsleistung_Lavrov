@@ -82,23 +82,23 @@
                         <div class="d-flex justify-content-between">
                             <div class="pal-option" data-pal="1.2">
                                 <img src="/static/images/pal/wenig_aktiv.jpg" alt="Sedentary" class="img-fluid">
-                                <p>Wenig Aktiv (1.2)</p>
+                                <p>Wenig Aktiv</p>
                             </div>
                             <div class="pal-option" data-pal="1.375">
                                 <img src="/static/images/pal/leicht_aktiv.jpg" alt="Light" class="img-fluid">
-                                <p>Leicht Aktiv (1.375)</p>
+                                <p>Leicht Aktiv</p>
                             </div>
                             <div class="pal-option" data-pal="1.55">
                                 <img src="/static/images/pal/maeßig_aktiv.jpg" alt="Moderate" class="img-fluid">
-                                <p>Mäßig Aktiv (1.55)</p>
+                                <p>Mäßig Aktiv</p>
                             </div>
                             <div class="pal-option" data-pal="1.725">
                                 <img src="/static/images/pal/sehr_aktiv.jpg" alt="Active" class="img-fluid">
-                                <p>Sehr Aktiv (1.725)</p>
+                                <p>Sehr Aktiv</p>
                             </div>
                             <div class="pal-option" data-pal="1.9">
                                 <img src="/static/images/pal/extrem_aktiv.jpg" alt="Very Active" class="img-fluid">
-                                <p>Extrem Aktiv (1.9)</p>
+                                <p>Extrem Aktiv</p>
                             </div>
                         </div>
                     </div>
@@ -107,6 +107,57 @@
                 </form>
                 <div class="mt-4">
                     <h3>Dein täglicher Kalorienbedarf ist: <span id="calorieResult">-</span> kcal</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label for="signupUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="signupUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="signupEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="signupPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -137,6 +188,51 @@
             });
             const data = await response.json();
             document.getElementById('calorieResult').textContent = data.calories;
+        });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const response = await fetch('/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            alert('Login successful!');
+            window.location.reload();
+        } else {
+            const errorData = await response.json();
+            alert(`Login failed: ${errorData.error}`);
+        }
+    });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const response = await fetch('/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+            if (response.ok) {
+                alert('Sign up successful! Please log in.');
+                document.getElementById('signupForm').reset();
+                var signupModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            } else {
+                alert('Sign up failed!');
+            }
         });
     </script>
 </body>

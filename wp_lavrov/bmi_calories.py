@@ -1,6 +1,5 @@
 def calculate_bmi(weight, height):
     bmi = round(weight / (height / 100) ** 2, 2)
-    category = ''
     if bmi < 18.5:
         category = 'Untergewicht'
     elif 18.5 <= bmi < 24.9:
@@ -26,7 +25,6 @@ def calculate_ffmi(sex, weight, height, bodyfat):
     ffmi = lean_mass / (height_m ** 2)
     ffmi_adjusted = ffmi + 6.1 * (1.8 - height_m)
 
-    category = ''
     if sex == 'male':
         if ffmi_adjusted <= 18:
             category = 'sehr wenig Muskelmasse'
